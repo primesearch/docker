@@ -2,7 +2,7 @@
 FROM ubuntu:24.04
 
 ARG DIR="mprime"
-ARG FILE="p95v3019b15.linux64.tar.gz"
+ARG FILE="p95v3019b20.linux64.tar.gz"
 
 RUN apt-get update -y && apt-get install -y wget curl expect
 
