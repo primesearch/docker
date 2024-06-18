@@ -8,13 +8,15 @@ RUN apt-get update -y && apt-get install -y wget curl expect
 
 WORKDIR ${DIR}
 
-# Downloading Prime95
+COPY MPrime.sh .
+
+# Downloading MPrime
 RUN wget https://www.mersenne.org/download/software/v30/30.19/${FILE}
 
 # Decompressing the files
 RUN tar -xzvf ${FILE}
 
-# Setting up Prime95
+# Setting up MPrime
 RUN wget -nv https://raw.github.com/tdulcet/Distributed-Computing-Scripts/master/mprime.exp
 
-CMD ["bash"]
+CMD ["bash", "MPrime.sh"]
