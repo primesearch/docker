@@ -8,15 +8,12 @@ RUN apt-get update -y && apt-get install -y wget curl expect
 
 WORKDIR ${DIR}
 
-COPY MPrime.sh .
+COPY MPrime.sh ./
 
-# Downloading MPrime
-RUN wget https://www.mersenne.org/download/software/v30/30.19/${FILE}
-
-# Decompressing the files
-RUN tar -xzvf ${FILE}
+# Downloading MPrime and Decompressing the files
+ADD --checksum=sha256:4ce2377e03deb4cf189523136e26401ba08f67857a128e420dd030d00cdca601 https://www.mersenne.org/download/software/v30/30.19/${FILE} ./
 
 # Setting up MPrime
-RUN wget -nv https://raw.github.com/tdulcet/Distributed-Computing-Scripts/master/mprime.exp
+ADD https://raw.github.com/tdulcet/Distributed-Computing-Scripts/master/mprime.exp ./
 
 CMD ["bash", "MPrime.sh"]
