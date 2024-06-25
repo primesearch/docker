@@ -7,6 +7,7 @@ set -e
 
 # Set these variables
 
+dir=${DIR:-.}
 prime_ID=${PRIME_ID:-Default}
 computer_name=${COMPUTER_NAME:-Default}
 type_of_work=${TYPE_OF_WORK:-150}
@@ -37,6 +38,9 @@ debug_exit() {
 install() {
 	# Install/Configure MPrime
 	echo -e "\nSetting up MPrime\n"
+	if [[ ! /mprime -ef $dir ]]; then
+		cp /mprime/* .
+	fi
 	sed -i '/^expect {/a \\t"Get occasional proof certification work (*):" { sleep 1; send -- "'$proof_certification_work'\\r"; exp_continue }' mprime.exp
 	sed -i '/^expect {/a \\t"stage 2 memory in GiB (*):" { sleep 1; send -- "'"$(echo "$TOTAL_PHYSICAL_MEM" | awk '{ printf "%g", ($1 * 0.8) / 1024 / 1024 }')"'\\r"; exp_continue }' mprime.exp
 	expect mprime.exp -- "$prime_ID" "$computer_name" "$type_of_work" # Run script
@@ -57,6 +61,12 @@ install() {
 wget -qO - https://raw.github.com/tdulcet/Linux-System-Information/master/info.sh | bash -s # Check System Info
 echo
 
+if [[ ! -d $dir ]]; then
+	echo "Error: Directory '$dir' does not exist" >&2
+	exit 1
+fi
+cd "$dir"
+
 # use/cleanup input from user
 if [[ ${prime_ID,,} == 'default' ]]; then
 	prime_ID='psu'
@@ -66,6 +76,12 @@ if [[ ${computer_name,,} == 'default' ]]; then
 	computer_name=''
 fi
 computer_name=${computer_name:-$HOSTNAME}
+
+RE='^([024568]|1(0[0124]|5[012345]|6[01])?)$'
+if ! [[ $type_of_work =~ $RE ]]; then
+	echo "Error: Type of work is not a valid number" >&2
+	exit 1
+fi
 
 if ((proof_certification_work)); then
 	proof_certification_work=y
