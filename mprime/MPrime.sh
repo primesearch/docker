@@ -41,7 +41,7 @@ install() {
 	if [[ ! /mprime -ef $dir ]]; then
 		cp /mprime/* .
 	fi
-	sed -i '/^expect {/a \\t"Get occasional proof certification work (*):" { sleep 1; send -- "'$proof_certification_work'\\r"; exp_continue }' mprime.exp
+	sed -i '/^expect {/a \\t"Get occasional proof certification work (*):" { sleep 1; send -- "'"$proof_certification_work"'\\r"; exp_continue }' mprime.exp
 	sed -i '/^expect {/a \\t"stage 2 memory in GiB (*):" { sleep 1; send -- "'"$(echo "$TOTAL_PHYSICAL_MEM" | awk '{ printf "%g", ($1 * 0.8) / 1024 / 1024 }')"'\\r"; exp_continue }' mprime.exp
 	expect mprime.exp -- "$prime_ID" "$computer_name" "$type_of_work" # Run script
 	file=prime.txt
@@ -53,8 +53,8 @@ install() {
 	if [[ $prp_proof_power_mult != 'Default' ]]; then
 		echo "ProofPowerMult=$prp_proof_power_mult" >>temp.txt
 	fi
-	cat $file >>temp.txt
-	mv temp.txt $file
+	cat "$file" >>temp.txt
+	mv temp.txt "$file"
 	run
 }
 
@@ -73,7 +73,7 @@ if [[ ${prime_ID,,} == 'default' ]]; then
 fi
 
 if [[ ${computer_name,,} == 'default' ]]; then
-	computer_name=''
+	computer_name=
 fi
 computer_name=${computer_name:-$HOSTNAME}
 
